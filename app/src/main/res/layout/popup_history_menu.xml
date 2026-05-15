@@ -3,77 +3,83 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minWidth="160dp"
-    android:orientation="vertical"
+    android:minWidth="128dp"
     android:background="@drawable/bg_menu_history"
-    android:paddingVertical="6dp"
-    android:elevation="8dp">
+    android:elevation="8dp"
+    android:orientation="vertical"
+    android:paddingVertical="6dp">
 
     <!-- Rename -->
     <LinearLayout
         android:id="@+id/menuRename"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="?attr/selectableItemBackground"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginVertical="2dp"
+        android:background="@drawable/bg_popup_item"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:gravity="start|center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="14dp">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_edit"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
             android:contentDescription="@null"
-            app:tint="?attr/text_color"/>
+            android:src="@drawable/ic_edit"
+            app:tint="?attr/text_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:text="@string/action_rename"
+            android:layout_marginStart="10dp"
             android:fontFamily="@font/linottesemibold"
-            android:textSize="14sp"
-            android:textColor="?attr/text_color" />
+            android:text="@string/action_rename"
+            android:textColor="?attr/text_color"
+            android:textSize="13sp" />
     </LinearLayout>
 
     <!-- Divider -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.6dp"
+        android:layout_height="1dp"
         android:layout_marginHorizontal="12dp"
-        android:background="?attr/color_4"/>
+        android:layout_marginVertical="4dp"
+        android:alpha="0.10"
+        android:background="?attr/text_color" />
 
     <!-- Delete -->
     <LinearLayout
         android:id="@+id/menuDelete"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="?attr/selectableItemBackground"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginVertical="2dp"
+        android:background="@drawable/bg_popup_item"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:gravity="start|center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="14dp">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_delete"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
             android:contentDescription="@null"
-            app:tint="?attr/color_error"/>
+            android:src="@drawable/ic_delete"
+            app:tint="?attr/color_error" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:text="@string/action_delete"
+            android:layout_marginStart="10dp"
             android:fontFamily="@font/linottesemibold"
-            android:textSize="14sp"
-            android:textColor="?attr/color_error" />
+            android:text="@string/action_delete"
+            android:textColor="?attr/color_error"
+            android:textSize="13sp" />
     </LinearLayout>
 
 </LinearLayout>

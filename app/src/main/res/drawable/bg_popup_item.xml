@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Drawable: bg_toolbar_btn.xml
-    Ripple soft modern ala Material 3
--->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="?attr/colorControlHighlight">
 
-    <!-- Background normal -->
+    <!-- Normal background -->
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@android:color/transparent"/>
-            <corners android:radius="10dp"/>
+            <corners android:radius="12dp"/>
         </shape>
     </item>
 
@@ -18,7 +14,7 @@
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
             <solid android:color="#FFFFFF"/>
-            <corners android:radius="10dp"/>
+            <corners android:radius="12dp"/>
         </shape>
     </item>
 
