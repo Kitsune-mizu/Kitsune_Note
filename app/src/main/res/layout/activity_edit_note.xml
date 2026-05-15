@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Layout: Note Editor Screen (Modern)
-    Deskripsi: Tampilan untuk membuat dan mengedit catatan — upgrade modern
+    Layout: Note Editor Screen (Modern Improved)
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/color_1"
     android:focusableInTouchMode="true"
     tools:openDrawer="start">
@@ -17,196 +16,201 @@
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="?attr/color_2"
-        android:elevation="2dp"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp">
+        android:background="?attr/color_1"
+        android:elevation="0dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp">
 
         <!-- Back Button -->
         <ImageButton
             android:id="@+id/btn_back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/bg_toolbar_btn"
             android:contentDescription="@string/cd_back"
-            android:padding="12dp"
+            android:padding="11dp"
             android:src="@drawable/ic_back"
             app:tint="?attr/text_color" />
 
-        <!-- Default Action Buttons (Delete, Share, Menu) -->
+        <!-- Default Actions -->
         <LinearLayout
             android:id="@+id/layout_default_actions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:orientation="horizontal"
-            android:visibility="visible">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btn_delete"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_delete"
-                android:padding="12dp"
+                android:padding="11dp"
                 android:visibility="gone"
                 app:tint="?attr/text_color" />
 
             <ImageButton
                 android:id="@+id/btn_share"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_share"
-                android:padding="12dp"
+                android:padding="11dp"
                 android:visibility="gone"
                 app:tint="?attr/text_color" />
 
             <ImageButton
                 android:id="@+id/btn_menu"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_menu"
-                android:padding="12dp"
+                android:padding="11dp"
                 android:src="@drawable/ic_menu"
                 app:tint="?attr/text_color" />
         </LinearLayout>
 
-        <!-- Input Action Buttons (Undo, Redo, Save) -->
+        <!-- Input Actions -->
         <LinearLayout
             android:id="@+id/layout_input_actions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:visibility="gone">
 
             <ImageButton
                 android:id="@+id/btn_undo"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_undo"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_undo"
                 app:tint="?attr/text_color" />
 
             <ImageButton
                 android:id="@+id/btn_redo"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_redo"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_redo"
                 app:tint="?attr/text_color" />
 
-            <!-- Save Button — pakai MaterialButton agar bisa diberi warna accent -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save_manual"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
                 android:contentDescription="@string/cd_save"
                 android:minWidth="0dp"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="@string/cd_save"
+                android:textAllCaps="false"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:cornerRadius="12dp"
+                app:cornerRadius="14dp"
                 app:icon="@drawable/ic_save"
-                app:iconSize="16dp"
-                app:iconPadding="4dp"
-                app:tint="?attr/text_color"/>
-
+                app:iconGravity="textStart"
+                app:iconPadding="6dp"
+                app:iconSize="16dp" />
         </LinearLayout>
 
     </RelativeLayout>
 
-    <!-- ================= MAIN CONTENT AREA ================= -->
+    <!-- ================= MAIN CONTENT ================= -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/keyboard_toolbar"
         android:layout_below="@id/header_container"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        android:clipToPadding="false"
+        android:paddingStart="22dp"
         android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        android:clipToPadding="false">
+        android:paddingEnd="22dp"
+        android:paddingBottom="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Title Input -->
+            <!-- TITLE -->
             <EditText
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
+                android:alpha="0.92"
                 android:autofillHints=""
                 android:background="@null"
+                android:fontFamily="@font/linottebold"
                 android:hint="@string/title_hint"
-                android:inputType="textMultiLine"
-                android:lineSpacingMultiplier="1.2"
+                android:inputType="textCapSentences|textMultiLine"
+                android:lineSpacingExtra="2dp"
                 android:textColor="?attr/text_color"
                 android:textColorHint="?attr/text_color"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:alpha="0.6"
-                android:fontFamily="@font/linottebold"/>
+                android:textSize="28sp"
+                android:textStyle="bold" />
 
             <!-- Metadata -->
             <TextView
                 android:id="@+id/tv_metadata"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="18dp"
+                android:alpha="0.55"
+                android:fontFamily="@font/linottesemibold"
                 android:text="@string/metadata_placeholder"
                 android:textColor="?attr/text_color"
-                android:textSize="12sp"
-                android:fontFamily="@font/linottesemibold"/>
+                android:textSize="12sp" />
 
-            <!-- Thin divider between metadata and content -->
+            <!-- Soft Divider -->
             <View
-                android:layout_width="32dp"
-                android:layout_height="2dp"
-                android:layout_marginBottom="16dp"
-                android:background="?attr/text_color"
-                android:alpha="0.6" />
+                android:layout_width="36dp"
+                android:layout_height="3dp"
+                android:layout_marginBottom="18dp"
+                android:alpha="0.18"
+                android:background="?attr/text_color" />
 
-            <!-- Content Input -->
+            <!-- CONTENT -->
             <EditText
                 android:id="@+id/et_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:alpha="0.88"
                 android:autofillHints=""
                 android:background="@null"
+                android:fontFamily="@font/linottesemibold"
                 android:gravity="top|start"
                 android:hint="@string/content_hint"
                 android:inputType="textMultiLine|textCapSentences"
-                android:lineSpacingMultiplier="1.6"
-                android:minHeight="300dp"
+                android:lineSpacingExtra="10dp"
+                android:minHeight="400dp"
                 android:textColor="?attr/text_color"
                 android:textColorHint="?attr/text_color"
-                android:textSize="16sp"
-                android:fontFamily="@font/linottesemibold"
-                android:alpha="0.6"/>
+                android:textCursorDrawable="@null"
+                android:textSize="17sp" />
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- ================= SHARE PREVIEW CONTAINER ================= -->
+    <!-- ================= SHARE PREVIEW ================= -->
     <LinearLayout
         android:id="@+id/share_container"
         android:layout_width="match_parent"
@@ -215,7 +219,7 @@
         android:layout_below="@id/header_container"
         android:background="?attr/color_1"
         android:orientation="vertical"
-        android:padding="24dp"
+        android:padding="28dp"
         android:visibility="gone">
 
         <TextView
@@ -223,14 +227,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?attr/text_color"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/share_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
+            android:layout_marginTop="4dp"
+            android:paddingBottom="10dp"
             android:textColor="?attr/text_color"
             android:textSize="12sp" />
 
@@ -239,181 +244,179 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:lineSpacingMultiplier="1.6"
+            android:lineSpacingExtra="8dp"
             android:textColor="?attr/text_color"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- ================= KEYBOARD TOOLBAR ================= -->
+    <!-- ================= FLOATING KEYBOARD TOOLBAR ================= -->
     <HorizontalScrollView
         android:id="@+id/keyboard_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/bg_keyboard_toolbar"
-        android:elevation="8dp"
-        android:fillViewport="true">
+        android:clipToOutline="true"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:padding="6dp"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp">
+            android:orientation="horizontal">
 
-            <!-- Text Color -->
             <ImageButton
                 android:id="@+id/action_text_color"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_text_color"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_color"
                 app:tint="?attr/text_color" />
 
-            <!-- Highlight -->
             <ImageButton
                 android:id="@+id/action_highlight"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_highlight"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_highlight"
                 app:tint="?attr/text_color" />
 
-            <!-- Divider -->
             <View
                 android:layout_width="1dp"
-                android:layout_height="24dp"
-                android:layout_marginHorizontal="6dp"
-                android:alpha="0.15"
+                android:layout_height="22dp"
+                android:layout_marginHorizontal="8dp"
+                android:alpha="0.12"
                 android:background="?attr/text_color" />
 
-            <!-- Bold -->
             <ImageButton
                 android:id="@+id/action_bold"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_bold"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_bold"
                 app:tint="?attr/text_color" />
 
-            <!-- Italic -->
             <ImageButton
                 android:id="@+id/action_italic"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_italic"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_italic"
                 app:tint="?attr/text_color" />
 
-            <!-- Underline -->
             <ImageButton
                 android:id="@+id/action_underline"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_underline"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_underline"
                 app:tint="?attr/text_color" />
 
-            <!-- Strikethrough -->
             <ImageButton
                 android:id="@+id/action_strike"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_strikethrough"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_strikethrough"
                 app:tint="?attr/text_color" />
 
-            <!-- Divider -->
             <View
                 android:layout_width="1dp"
-                android:layout_height="24dp"
-                android:layout_marginHorizontal="6dp"
-                android:alpha="0.15"
+                android:layout_height="22dp"
+                android:layout_marginHorizontal="8dp"
+                android:alpha="0.12"
                 android:background="?attr/text_color" />
 
-            <!-- Bullet List -->
             <ImageButton
                 android:id="@+id/action_bullet_list"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_bullet_list"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_list_bulleted"
                 app:tint="?attr/text_color" />
 
-            <!-- Align Left -->
             <ImageButton
                 android:id="@+id/action_align_left"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_align_left"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_align_left"
                 app:tint="?attr/text_color" />
 
-            <!-- Align Center -->
             <ImageButton
                 android:id="@+id/action_align_center"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_align_center"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_align_center"
                 app:tint="?attr/text_color" />
 
-            <!-- Align Right -->
             <ImageButton
                 android:id="@+id/action_align_right"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_align_right"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_align_right"
                 app:tint="?attr/text_color" />
 
-            <!-- Divider -->
             <View
                 android:layout_width="1dp"
-                android:layout_height="24dp"
-                android:layout_marginHorizontal="6dp"
-                android:alpha="0.15"
+                android:layout_height="22dp"
+                android:layout_marginHorizontal="8dp"
+                android:alpha="0.12"
                 android:background="?attr/text_color" />
 
-            <!-- Increase Text Size -->
             <ImageButton
                 android:id="@+id/action_size_up"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_size_up"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_increase"
                 app:tint="?attr/text_color" />
 
-            <!-- Decrease Text Size -->
             <ImageButton
                 android:id="@+id/action_size_down"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/bg_toolbar_btn"
                 android:contentDescription="@string/cd_size_down"
-                android:padding="9dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_text_decrease"
                 app:tint="?attr/text_color" />
 

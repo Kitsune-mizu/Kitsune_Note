@@ -126,6 +126,7 @@
     <string name="share_chooser_title">Share Note Image</string>
     <string name="dialog_delete_note_title">Delete Note</string>
     <string name="dialog_delete_note_msg">Delete permanently?</string>
+    <string name="choose_color">Choose Color</string>
 
     <!-- ── Note Item ── -->
     <string name="note_title_placeholder">Note Title</string>

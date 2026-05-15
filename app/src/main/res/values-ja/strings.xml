@@ -125,6 +125,7 @@
     <string name="share_chooser_title">メモ画像を共有</string>
     <string name="dialog_delete_note_title">メモを削除</string>
     <string name="dialog_delete_note_msg">完全に削除しますか？</string>
+    <string name="choose_color">色を選択</string>
 
     <!-- ── メモアイテム ── -->
     <string name="note_title_placeholder">メモのタイトル</string>

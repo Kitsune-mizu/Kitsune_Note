@@ -125,6 +125,7 @@
     <string name="share_chooser_title">Bagikan Gambar Catatan</string>
     <string name="dialog_delete_note_title">Hapus Catatan</string>
     <string name="dialog_delete_note_msg">Hapus permanen?</string>
+    <string name="choose_color">Pilih Warna</string>
 
     <!-- ── Item Catatan ── -->
     <string name="note_title_placeholder">Judul Catatan</string>

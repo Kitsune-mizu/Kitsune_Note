@@ -118,7 +118,6 @@ dependencies {
     implementation(libs.gson.v2101)
     implementation(libs.shimmer)
     implementation(libs.yalantis.ucrop)
-    implementation(libs.yukuku.ambilwarna)
 
     // --- Maps (OSM) & Biometrics ---
     implementation(libs.osmdroid.android)

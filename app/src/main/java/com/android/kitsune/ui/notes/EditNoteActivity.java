@@ -15,8 +15,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Layout;
@@ -47,7 +45,6 @@ import com.android.kitsune.data.session.UserSession;
 import com.android.kitsune.ui.auth.LoginActivity;
 import com.android.kitsune.utils.DialogUtils;
 import com.google.gson.Gson;
-import yuku.ambilwarna.AmbilWarnaDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,11 +59,14 @@ public class EditNoteActivity extends BaseActivity {
 
     private static final String TAG = "EditNoteActivity";
     private static final int MAX_UNDO_HISTORY = 100;
-    private static final long UNDO_DEBOUNCE_MS = 500;
+    private static final long UNDO_DEBOUNCE_MS = 800;
     private static final float BASE_TEXT_SIZE_SP = 14f;
     private static final float SIZE_STEP_SP = 2f;
     private static final float MIN_TEXT_SIZE_SP = 10f;
     private static final float MAX_TEXT_SIZE_SP = 36f;
+
+    private final android.os.Handler undoHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable undoRunnable = this::pushUndoSnapshot;
 
     private NoteViewModel viewModel;
     private Note currentNote;
@@ -83,9 +83,6 @@ public class EditNoteActivity extends BaseActivity {
     private final Deque<SpannableStringBuilder> redoStack = new ArrayDeque<>();
 
     private boolean isRestoringHistory = false;
-
-    private final Handler undoDebounceHandler = new Handler(Looper.getMainLooper());
-    private final Runnable undoPushRunnable = this::pushUndoSnapshot;
 
     private ImageButton btnBold, btnItalic, btnUnderline, btnHighlight, btnStrike, btnTextColor;
     private ImageButton btnAlignLeft, btnAlignCenter, btnAlignRight;
@@ -271,22 +268,22 @@ public class EditNoteActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (isRestoringHistory) {
-                    return;
-                }
+                if (isRestoringHistory) return;
 
+                String currentText = s.toString();
                 int cursor = etContent.getSelectionStart();
-                int lineStart = s.toString().lastIndexOf('\n', cursor - 1) + 1;
+                int lineStart = currentText.lastIndexOf('\n', cursor - 1) + 1;
 
-                if (bulletMode && !s.toString().startsWith("• ", lineStart)) {
+                if (bulletMode && !currentText.startsWith("• ", lineStart)) {
                     bulletMode = false;
                     updateToolbarState();
                 }
 
                 updateMetadata();
 
-                undoDebounceHandler.removeCallbacks(undoPushRunnable);
-                undoDebounceHandler.postDelayed(undoPushRunnable, UNDO_DEBOUNCE_MS);
+                undoHandler.removeCallbacks(undoRunnable);
+                undoHandler.postDelayed(undoRunnable, UNDO_DEBOUNCE_MS);
+
                 redoStack.clear();
                 refreshUndoRedoButtons();
             }
@@ -320,52 +317,50 @@ public class EditNoteActivity extends BaseActivity {
     // ─── Undo & Redo ─────────────────────────────────────────────────────────
 
     private void pushUndoSnapshot() {
+        if (isRestoringHistory || etContent == null || etContent.getText() == null) return;
+
         SpannableStringBuilder snapshot = new SpannableStringBuilder(etContent.getText());
         SpannableStringBuilder top = undoStack.peek();
 
-        if (top != null && top.toString().equals(snapshot.toString())) {
-            return;
-        }
+        if (top != null && top.toString().equals(snapshot.toString())) return;
 
         undoStack.push(snapshot);
-        if (undoStack.size() > MAX_UNDO_HISTORY) {
-            undoStack.removeLast();
-        }
-
+        if (undoStack.size() > MAX_UNDO_HISTORY) undoStack.removeLast();
         refreshUndoRedoButtons();
     }
 
     private void undo() {
-        if (undoStack.size() <= 1) {
-            return;
+        if (undoStack.size() <= 1) return;
+
+        undoHandler.removeCallbacks(undoRunnable);
+        SpannableStringBuilder current = new SpannableStringBuilder(etContent.getText());
+        SpannableStringBuilder top = undoStack.peek();
+        if (top == null || !top.toString().equals(current.toString())) {
+            undoStack.push(current);
         }
 
         isRestoringHistory = true;
         redoStack.push(undoStack.pop());
 
-        SpannableStringBuilder restored = new SpannableStringBuilder(undoStack.peek());
-        int cursor = Math.min(etContent.getSelectionStart(), restored.length());
-
+        SpannableStringBuilder restored = new SpannableStringBuilder(Objects.requireNonNull(undoStack.peek()));
         etContent.setText(restored);
-        etContent.setSelection(Math.max(0, cursor));
+        etContent.setSelection(Math.min(restored.length(), etContent.length()));
 
         isRestoringHistory = false;
         refreshUndoRedoButtons();
     }
 
     private void redo() {
-        if (redoStack.isEmpty()) {
-            return;
-        }
+        if (redoStack.isEmpty()) return;
 
+        undoHandler.removeCallbacks(undoRunnable);
         isRestoringHistory = true;
+
         SpannableStringBuilder restored = new SpannableStringBuilder(redoStack.pop());
         undoStack.push(new SpannableStringBuilder(restored));
 
-        int cursor = Math.min(etContent.getSelectionStart(), restored.length());
-
         etContent.setText(restored);
-        etContent.setSelection(Math.max(0, cursor));
+        etContent.setSelection(Math.min(restored.length(), etContent.length()));
 
         isRestoringHistory = false;
         refreshUndoRedoButtons();
@@ -543,7 +538,7 @@ public class EditNoteActivity extends BaseActivity {
     }
 
     private void saveAndExit() {
-        undoDebounceHandler.removeCallbacks(undoPushRunnable);
+        undoHandler.removeCallbacks(undoRunnable);
 
         String title = etTitle.getText().toString().trim();
         String contentHtml = spannableToHtml(etContent.getText());
@@ -759,17 +754,6 @@ public class EditNoteActivity extends BaseActivity {
 
     // ─── Share as Image ──────────────────────────────────────────────────────
 
-    private Bitmap createBitmapFromView(View view) {
-        view.measure(
-                View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
-    }
-
     private Uri saveBitmapToCache(Bitmap bitmap) {
         try {
             File cachePath = new File(getCacheDir(), "shared_notes");
@@ -791,33 +775,72 @@ public class EditNoteActivity extends BaseActivity {
     }
 
     private void shareNoteAsImage() {
-        LinearLayout container = findViewById(R.id.share_container);
-        TextView sTitle = findViewById(R.id.share_title);
-        TextView sContent = findViewById(R.id.share_content);
-        TextView sDate = findViewById(R.id.share_date);
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setBackgroundColor(getAttrColor(R.attr.color_1));
+        container.setPadding(64, 64, 64, 80);
 
-        sTitle.setText(etTitle.getText().toString());
-        sContent.setText(Html.fromHtml(currentNote.getContent(), Html.FROM_HTML_MODE_COMPACT));
-        sDate.setText(new SimpleDateFormat("MMM dd, yyyy, HH:mm", Locale.getDefault())
+        // App watermark (atas)
+        TextView tvApp = new TextView(this);
+        tvApp.setText(getString(R.string.app_name));
+        tvApp.setTextColor(getAttrColor(R.attr.text_color));
+        tvApp.setAlpha(0.35f);
+        tvApp.setTextSize(11f);
+        tvApp.setTypeface(tvApp.getTypeface(), Typeface.BOLD);
+        tvApp.setPadding(0, 0, 0, 20);
+        container.addView(tvApp);
+
+        // Title
+        TextView tvTitle = new TextView(this);
+        tvTitle.setText(etTitle.getText().toString());
+        tvTitle.setTextColor(getAttrColor(R.attr.text_color));
+        tvTitle.setTextSize(22f);
+        tvTitle.setTypeface(tvTitle.getTypeface(), Typeface.BOLD);
+        tvTitle.setPadding(0, 0, 0, 10);
+        container.addView(tvTitle);
+
+        // Date
+        TextView tvDate = new TextView(this);
+        tvDate.setText(new SimpleDateFormat("MMM dd, yyyy · HH:mm", Locale.getDefault())
                 .format(new Date(currentNote.getTimestamp())));
+        tvDate.setTextColor(getAttrColor(R.attr.text_color));
+        tvDate.setAlpha(0.5f);
+        tvDate.setTextSize(12f);
+        tvDate.setPadding(0, 0, 0, 4);
+        container.addView(tvDate);
 
-        int bgColor = getAttrColor(R.attr.color_1);
-        int textColor = getAttrColor(R.attr.text_color);
-        container.setPadding(48, 48, 48, 48);
-        container.setBackgroundColor(bgColor);
-        sTitle.setTextColor(textColor);
-        sContent.setTextColor(textColor);
-        sDate.setTextColor(textColor);
-        container.setVisibility(View.VISIBLE);
+        // Divider
+        View divider = new View(this);
+        LinearLayout.LayoutParams divParams = new LinearLayout.LayoutParams(
+                (int) (48 * getResources().getDisplayMetrics().density),
+                (int) (3 * getResources().getDisplayMetrics().density));
+        divParams.setMargins(0, 16, 0, 24);
+        divider.setLayoutParams(divParams);
+        divider.setBackgroundColor(getAttrColor(R.attr.text_color));
+        divider.setAlpha(0.2f);
+        container.addView(divider);
 
-        int targetWidth = container.getRootView().getWidth();
-        container.measure(
-                View.MeasureSpec.makeMeasureSpec(targetWidth, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        TextView tvContent = new TextView(this);
+        tvContent.setText(etContent.getText());
+        tvContent.setTextColor(getAttrColor(R.attr.text_color));
+        tvContent.setTextSize(15f);
+        tvContent.setLineSpacing(8f, 1f);
+        tvContent.setMovementMethod(null);
+        container.addView(tvContent);
+
+        // Measure & layout manual
+        int screenWidth = getWindow().getDecorView().getWidth();
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(screenWidth, View.MeasureSpec.EXACTLY);
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        container.measure(widthSpec, heightSpec);
         container.layout(0, 0, container.getMeasuredWidth(), container.getMeasuredHeight());
 
-        Bitmap bitmap = createBitmapFromView(container);
-        container.setVisibility(View.GONE);
+        Bitmap bitmap = Bitmap.createBitmap(
+                container.getMeasuredWidth(),
+                container.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        container.draw(canvas);
 
         Uri uri = saveBitmapToCache(bitmap);
         if (uri == null) {
@@ -988,17 +1011,139 @@ public class EditNoteActivity extends BaseActivity {
         openColorPicker(currentHighlightColor, this::toggleBackgroundColor, color -> currentHighlightColor = color);
     }
 
-    private void openColorPicker(int initialColor, ColorCallback onOk, ColorCallback onSave) {
-        new AmbilWarnaDialog(this, initialColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
-            @Override
-            public void onOk(AmbilWarnaDialog dialog, int color) {
-                onOk.onColorSelected(color);
-                onSave.onColorSelected(color);
+    private void openColorPicker(int selectedColor, ColorCallback onOk, ColorCallback onSave) {
+
+        final int[] colors = {
+                // Row 1 - Reds & Pinks
+                Color.parseColor("#FF0000"),
+                Color.parseColor("#FF4444"),
+                Color.parseColor("#FF6B6B"),
+                Color.parseColor("#FF8787"),
+                Color.parseColor("#FFA8A8"),
+                Color.parseColor("#FF69B4"),
+                Color.parseColor("#F06595"),
+                Color.parseColor("#E64980"),
+
+                // Row 2 - Purples
+                Color.parseColor("#CC5DE8"),
+                Color.parseColor("#AE3EC9"),
+                Color.parseColor("#845EF7"),
+                Color.parseColor("#7048E8"),
+                Color.parseColor("#5C5FE0"),
+                Color.parseColor("#4263EB"),
+                Color.parseColor("#3B5BDB"),
+                Color.parseColor("#364FC7"),
+
+                // Row 3 - Blues & Cyans
+                Color.parseColor("#339AF0"),
+                Color.parseColor("#1C7ED6"),
+                Color.parseColor("#1098AD"),
+                Color.parseColor("#0C8599"),
+                Color.parseColor("#22B8CF"),
+                Color.parseColor("#15AABF"),
+                Color.parseColor("#3BC9DB"),
+                Color.parseColor("#66D9E8"),
+
+                // Row 4 - Greens
+                Color.parseColor("#20C997"),
+                Color.parseColor("#0CA678"),
+                Color.parseColor("#51CF66"),
+                Color.parseColor("#2F9E44"),
+                Color.parseColor("#94D82D"),
+                Color.parseColor("#74B816"),
+                Color.parseColor("#A9E34B"),
+                Color.parseColor("#C0EB75"),
+
+                // Row 5 - Yellows & Oranges
+                Color.parseColor("#FCC419"),
+                Color.parseColor("#F59F00"),
+                Color.parseColor("#FFD43B"),
+                Color.parseColor("#FFE066"),
+                Color.parseColor("#FF922B"),
+                Color.parseColor("#E8590C"),
+                Color.parseColor("#FD7E14"),
+                Color.parseColor("#F76707"),
+
+                // Row 6 - Neutrals
+                Color.parseColor("#FFFFFF"),
+                Color.parseColor("#F1F3F5"),
+                Color.parseColor("#DEE2E6"),
+                Color.parseColor("#ADB5BD"),
+                Color.parseColor("#6C757D"),
+                Color.parseColor("#495057"),
+                Color.parseColor("#212529"),
+                Color.parseColor("#000000"),
+        };
+
+        com.google.android.material.bottomsheet.BottomSheetDialog dialog =
+                new com.google.android.material.bottomsheet.BottomSheetDialog(
+                        this, R.style.BottomSheetDialogTheme);
+
+        ViewGroup root = findViewById(android.R.id.content);
+        View view = getLayoutInflater().inflate(R.layout.bottomsheet_color_picker, root, false);
+        androidx.gridlayout.widget.GridLayout container = view.findViewById(R.id.color_container);
+
+        container.setColumnCount(8);
+
+        int swatchSizePx = (int) (40 * getResources().getDisplayMetrics().density);
+        int marginPx = (int) (5 * getResources().getDisplayMetrics().density);
+        int strokeWidthPx = (int) (2.5f * getResources().getDisplayMetrics().density);
+        int selectedStrokeWidthPx = (int) (3.5f * getResources().getDisplayMetrics().density);
+
+        for (int color : colors) {
+            View colorView = new View(this);
+
+            androidx.gridlayout.widget.GridLayout.LayoutParams params =
+                    new androidx.gridlayout.widget.GridLayout.LayoutParams();
+            params.width = swatchSizePx;
+            params.height = swatchSizePx;
+            params.setMargins(marginPx, marginPx, marginPx, marginPx);
+            colorView.setLayoutParams(params);
+
+            android.graphics.drawable.GradientDrawable bg =
+                    new android.graphics.drawable.GradientDrawable();
+            bg.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            bg.setColor(color);
+
+            boolean isSelected = color == selectedColor;
+            boolean isLight = isLightColor(color);
+
+            if (isSelected) {
+                // Stroke tebal + warna kontras untuk selected
+                int strokeColor = isLight
+                        ? Color.parseColor("#333333")
+                        : Color.parseColor("#FFFFFF");
+                bg.setStroke(selectedStrokeWidthPx, strokeColor);
+                colorView.setScaleX(1.2f);
+                colorView.setScaleY(1.2f);
+            } else {
+                // Stroke tipis agar semua warna terlihat outline-nya
+                int strokeColor = isLight
+                        ? Color.parseColor("#CCCCCC")
+                        : Color.parseColor("#00000033");
+                bg.setStroke(strokeWidthPx, strokeColor);
             }
 
-            @Override
-            public void onCancel(AmbilWarnaDialog dialog) {}
-        }).show();
+            colorView.setBackground(bg);
+
+            colorView.setOnClickListener(v -> {
+                onOk.onColorSelected(color);
+                onSave.onColorSelected(color);
+                dialog.dismiss();
+            });
+
+            container.addView(colorView);
+        }
+
+        dialog.setContentView(view);
+        dialog.show();
+    }
+
+    private boolean isLightColor(int color) {
+        double luminance = (0.299 * Color.red(color)
+                + 0.587 * Color.green(color)
+                + 0.114 * Color.blue(color)) / 255.0;
+        return luminance > 0.6;
     }
 
     private interface ColorCallback {

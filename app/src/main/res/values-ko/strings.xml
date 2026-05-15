@@ -125,6 +125,7 @@
     <string name="share_chooser_title">메모 이미지 공유</string>
     <string name="dialog_delete_note_title">메모 삭제</string>
     <string name="dialog_delete_note_msg">영구 삭제하시겠습니까?</string>
+    <string name="choose_color">색상 선택</string>
 
     <!-- ── 메모 아이템 ── -->
     <string name="note_title_placeholder">메모 제목</string>

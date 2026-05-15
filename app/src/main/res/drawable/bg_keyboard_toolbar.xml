@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Drawable: bg_keyboard_toolbar.xml
-    Deskripsi: Background toolbar keyboard dengan top rounded corners dan surface color
--->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Shadow atas -->
+    <!-- Shadow atas — harus ikut rounded -->
     <item>
         <shape android:shape="rectangle">
             <solid android:color="#10000000" />
+            <corners
+                android:topLeftRadius="16dp"
+                android:topRightRadius="16dp" />
         </shape>
     </item>
 
