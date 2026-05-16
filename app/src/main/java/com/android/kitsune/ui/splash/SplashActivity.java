@@ -404,29 +404,6 @@ public class SplashActivity extends BaseActivity {
                 + "</g>"
 
                 // ══════════════════════════════════════════════════
-                // KARAKTER 1: RUBAH (Diturunkan sedikit agar natural saat melompat)
-                // ══════════════════════════════════════════════════
-                + "<g transform='translate(47, 160)'>"
-                + "<g class='fox'>"
-                + "<rect x='28' y='274' width='8'  height='10' fill='#C67D53'/>"
-                + "<rect x='30' y='276' width='3'  height='5'  fill='#CBD5E1'/>"
-                + "<rect x='44' y='274' width='8'  height='10' fill='#C67D53'/>"
-                + "<rect x='46' y='276' width='3'  height='5'  fill='#CBD5E1'/>"
-                + "<rect x='26' y='284' width='30' height='22' fill='#C67D53'/>"
-                + "<rect x='28' y='290' width='26' height='14' fill='#CBD5E1'/>"
-                + "<rect x='30' y='292' width='6'  height='6'  fill='" + cBorder + "'/>"
-                + "<rect x='31' y='293' width='3'  height='3'  fill='" + cMid + "'/>"
-                + "<rect x='44' y='292' width='6'  height='6'  fill='" + cBorder + "'/>"
-                + "<rect x='45' y='293' width='3'  height='3'  fill='" + cMid + "'/>"
-                + "<rect x='38' y='298' width='4'  height='3'  fill='#715548'/>"
-                + "<rect x='28' y='306' width='26' height='14' fill='#C67D53'/>"
-                + "<rect x='54' y='304' width='8'  height='8'  fill='#C67D53'/>"
-                + "<rect x='60' y='298' width='6'  height='6'  fill='#CBD5E1'/>"
-                + "<rect x='28' y='320' width='8'  height='6'  fill='" + cBorder + "'/>"
-                + "<rect x='44' y='320' width='8'  height='6'  fill='" + cBorder + "'/>"
-                + "</g></g>"
-
-                // ══════════════════════════════════════════════════
                 // KARAKTER 2: JAMUR
                 // ══════════════════════════════════════════════════
                 + "<g transform='translate(53, 160)'>"
@@ -462,57 +439,6 @@ public class SplashActivity extends BaseActivity {
                 + "<rect x='186' y='292' width='2'  height='2'  fill='" + cBorder + "'/>"
                 + "<rect x='196' y='292' width='2'  height='2'  fill='" + cBorder + "'/>"
                 + "<rect x='190' y='294' width='4'  height='2'  fill='#A8832E'/>"
-                + "</g></g>"
-
-                // ══════════════════════════════════════════════════
-                // KARAKTER 4: HANTU (Diturunkan agar menjauh dari ikan)
-                // ══════════════════════════════════════════════════
-                + "<g transform='translate(31, 140)'>"
-                + "<g class='ghost'>"
-                + "<rect x='312' y='268' width='40' height='8'  fill='#CBD5E1'/>"
-                + "<rect x='306' y='276' width='52' height='40' fill='#CBD5E1'/>"
-                + "<rect x='302' y='282' width='6'  height='32' fill='#94A3B8'/>"
-                + "<rect x='356' y='282' width='6'  height='32' fill='#94A3B8'/>"
-                + "<rect x='302' y='314' width='8'  height='8'  fill='#94A3B8'/>"
-                + "<rect x='318' y='314' width='8'  height='10' fill='#CBD5E1'/>"
-                + "<rect x='332' y='314' width='8'  height='8'  fill='#94A3B8'/>"
-                + "<rect x='346' y='314' width='8'  height='10' fill='#CBD5E1'/>"
-                + "<rect x='314' y='284' width='8'  height='8'  fill='" + cBorder + "'/>"
-                + "<rect x='316' y='286' width='3'  height='3'  fill='" + cMid + "'/>"
-                + "<rect x='342' y='284' width='8'  height='8'  fill='" + cBorder + "'/>"
-                + "<rect x='344' y='286' width='3'  height='3'  fill='" + cMid + "'/>"
-                + "<rect x='320' y='298' width='4'  height='3'  fill='" + cBorder + "'/>"
-                + "<rect x='328' y='300' width='4'  height='3'  fill='" + cBorder + "'/>"
-                + "<rect x='336' y='298' width='4'  height='3'  fill='" + cBorder + "'/>"
-                + "<rect x='330' y='262' width='6'  height='6'  fill='#CBA344'/>"
-                + "<rect x='328' y='264' width='2'  height='2'  fill='#DEC273'/>"
-                + "<rect x='336' y='264' width='2'  height='2'  fill='#DEC273'/>"
-                + "</g></g>"
-
-                // ══════════════════════════════════════════════════
-                // KARAKTER 5: KUCING 8BIT (Diturunkan sedikit agar natural saat melompat)
-                // ══════════════════════════════════════════════════
-                + "<g transform='translate(-7, 158)'>"
-                + "<g class='cat'>"
-                + "<rect x='440' y='274' width='6' height='10' fill='#475569'/>"
-                + "<rect x='442' y='276' width='2' height='5'  fill='#C17798'/>"
-                + "<rect x='456' y='274' width='6' height='10' fill='#475569'/>"
-                + "<rect x='458' y='276' width='2' height='5'  fill='#C17798'/>"
-                + "<rect x='438' y='284' width='28' height='20' fill='#475569'/>"
-                + "<rect x='440' y='288' width='24' height='14' fill='#CBD5E1'/>"
-                + "<rect x='442' y='290' width='6' height='6'  fill='" + cBorder + "'/>"
-                + "<rect x='444' y='292' width='2' height='2'  fill='" + cMid + "'/>"
-                + "<rect x='456' y='290' width='6' height='6'  fill='" + cBorder + "'/>"
-                + "<rect x='458' y='292' width='2' height='2'  fill='" + cMid + "'/>"
-                + "<rect x='451' y='296' width='4' height='3'  fill='#C17798'/>"
-                + "<rect x='440' y='298' width='8' height='2'  fill='" + cBorder + "'/>"
-                + "<rect x='456' y='298' width='8' height='2'  fill='" + cBorder + "'/>"
-                + "<rect x='440' y='304' width='28' height='18' fill='#475569'/>"
-                + "<rect x='466' y='310' width='8' height='6'  fill='#475569'/>"
-                + "<rect x='472' y='304' width='6' height='6'  fill='#475569'/>"
-                + "<rect x='476' y='300' width='4' height='4'  fill='#CBD5E1'/>"
-                + "<rect x='442' y='322' width='8' height='6'  fill='#CBD5E1'/>"
-                + "<rect x='454' y='322' width='8' height='6'  fill='#CBD5E1'/>"
                 + "</g></g>"
 
                 // ══════════════════════════════════════════════════

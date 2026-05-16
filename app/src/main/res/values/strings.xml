@@ -86,16 +86,6 @@
     <string name="action_cancel">Cancel</string>
     <string name="toast_home_updated">Data updated.</string>
 
-    <!-- Kitsune Greeting Popup -->
-    <string name="popup_welcome_title">Welcome to Kitsune Note!</string>
-    <string name="popup_greeting_morning">🌅 Good morning! I\'m Kitsune, your note assistant. Let\'s start the day with great ideas!</string>
-    <string name="popup_greeting_afternoon">☀️ Good afternoon! I\'m Kitsune. Don\'t forget to save your thoughts in Kitsune Note!</string>
-    <string name="popup_greeting_evening">🌤️ Good evening! I\'m Kitsune. Great work today — capture your ideas before they fade!</string>
-    <string name="popup_greeting_night">🌙 Good night! I\'m Kitsune. Jot down your important notes before you rest!</string>
-    <string name="popup_message_1">📝 Write your ideas now before they\'re forgotten. Kitsune Note keeps everything safe for you!</string>
-    <string name="popup_message_2">✨ Tip: Try asking Gemini AI to help you expand your notes and ideas!</string>
-    <string name="popup_typing_dots">● ● ●</string>
-
     <!-- ══════════════════════════════════════════════════════════════
          NOTES
     ══════════════════════════════════════════════════════════════ -->

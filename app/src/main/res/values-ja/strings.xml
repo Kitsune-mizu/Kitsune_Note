@@ -86,15 +86,6 @@
     <string name="action_cancel">キャンセル</string>
     <string name="toast_home_updated">データを更新しました。</string>
 
-    <string name="popup_welcome_title">Kitsune Noteへようこそ！</string>
-    <string name="popup_greeting_morning">🌅 おはようございます！ノートアシスタントのKitsuneです。素晴らしいアイデアで一日を始めましょう！</string>
-    <string name="popup_greeting_afternoon">☀️ こんにちは！Kitsuneです。Kitsune Noteにあなたの考えを保存するのを忘れないでくださいね！</string>
-    <string name="popup_greeting_evening">🌤️ こんばんは！Kitsuneです。今日もお疲れ様でした — アイデアが消えてしまう前に記録しておきましょう！</string>
-    <string name="popup_greeting_night">🌙 おやすみなさい！Kitsuneです。休む前に重要なノートを書き留めておきましょう！</string>
-    <string name="popup_message_1">📝 アイデアを忘れる前に今すぐ書き留めましょう。Kitsune Noteがすべてを安全に保管します！</string>
-    <string name="popup_message_2">✨ ヒント：Gemini AIに頼んで、ノートやアイデアを広げる手伝いをしてもらいましょう！</string>
-    <string name="popup_typing_dots">● ● ●</string>
-
     <!-- ══════════════════════════════════════════════════════════════
          メモ
     ══════════════════════════════════════════════════════════════ -->

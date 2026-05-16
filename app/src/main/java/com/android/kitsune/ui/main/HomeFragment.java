@@ -1,7 +1,6 @@
 package com.android.kitsune.ui.main;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,9 +76,6 @@ public class HomeFragment extends Fragment implements
 
     private boolean isFirstLoad = true;
 
-    // PERBAIKAN: Gunakan static boolean agar tidak ter-reset saat recreate() tema
-    private static boolean hasShownGreetingPopup = false;
-
     private ActivityResultLauncher<Intent> noteLauncher;
 
     private final Runnable timeUpdater = new Runnable() {
@@ -121,7 +116,6 @@ public class HomeFragment extends Fragment implements
         }
 
         handler.post(timeUpdater);
-        checkAndShowGreetingPopup();
     }
 
     @Override
@@ -477,161 +471,5 @@ public class HomeFragment extends Fragment implements
                 swipeRefreshLayout.setRefreshing(false);
             }
         }, 800);
-    }
-
-    // ─── Kitsune Greeting Popup ──────────────────────────────────────────────
-
-    private void checkAndShowGreetingPopup() {
-        // PERBAIKAN: Cek apakah popup sudah pernah muncul di sesi ini
-        if (getActivity() == null || hasShownGreetingPopup) return;
-
-        hasShownGreetingPopup = true; // Tandai sudah muncul agar tidak berulang
-
-        handler.postDelayed(this::showKitsuneGreetingPopup, 3000);
-    }
-
-    private void showKitsuneGreetingPopup() {
-        if (getContext() == null || getActivity() == null || getActivity().isFinishing()) return;
-
-        Dialog dialog = new Dialog(requireContext(),
-                android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
-        dialog.setContentView(R.layout.dialog_kitsune_greeting);
-        dialog.setCancelable(true);
-
-        androidx.cardview.widget.CardView popupContainer =
-                dialog.findViewById(R.id.popupContainer);
-
-        android.widget.ImageButton btnClose =
-                dialog.findViewById(R.id.btnClosePopup);
-        LinearLayout typingWrap =
-                dialog.findViewById(R.id.typingIndicatorWrap);
-        android.widget.LinearLayout row1 =
-                dialog.findViewById(R.id.bubbleRow1);
-        android.widget.LinearLayout row2 =
-                dialog.findViewById(R.id.bubbleRow2);
-        TextView tvGreetingMsg  = dialog.findViewById(R.id.tvGreetingMsg);
-        TextView tvTipMsg       = dialog.findViewById(R.id.tvTipMsg);
-        TextView tvTime1        = dialog.findViewById(R.id.tvTime1);
-        TextView tvTime2        = dialog.findViewById(R.id.tvTime2);
-        TextView tvDate         = dialog.findViewById(R.id.tvDateSeparator);
-
-        // Date & time
-        SimpleDateFormat dateFmt =
-                new SimpleDateFormat("EEE, d MMM", new Locale("id"));
-        tvDate.setText(dateFmt.format(new Date()));
-        String timeNow = new SimpleDateFormat("HH:mm",
-                Locale.getDefault()).format(new Date());
-
-        // Pilih greeting sesuai jam
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        String greetingText;
-        if      (hour < 12) greetingText = getString(R.string.popup_greeting_morning);
-        else if (hour < 15) greetingText = getString(R.string.popup_greeting_afternoon);
-        else if (hour < 19) greetingText = getString(R.string.popup_greeting_evening);
-        else                greetingText = getString(R.string.popup_greeting_night);
-
-        String[] tips = {
-                getString(R.string.popup_message_1),
-                getString(R.string.popup_message_2)
-        };
-        String tipText = tips[new Random().nextInt(tips.length)];
-
-        // ANIMASI 1: Popup Card Meluncur dari Atas (-150f) Sambil Membesar (0.5f ke 1f)
-        popupContainer.setAlpha(0f);
-        popupContainer.setScaleX(0.5f); // Mulai dari kecil
-        popupContainer.setScaleY(0.5f);
-        popupContainer.setTranslationY(-150f); // Mulai dari atas
-        popupContainer.animate()
-                .alpha(1f).scaleX(1f).scaleY(1f).translationY(0f) // Meluncur turun ke tengah (0f)
-                .setDuration(500)
-                .setInterpolator(new OvershootInterpolator(1.2f))
-                .start();
-
-        // ANIMASI 2: Typing Pertama Muncul
-        handler.postDelayed(() -> {
-            typingWrap.setVisibility(View.VISIBLE);
-            typingWrap.setAlpha(0f);
-            typingWrap.setScaleX(0.8f);
-            typingWrap.setScaleY(0.8f);
-            typingWrap.setPivotX(0f);
-            typingWrap.animate().alpha(1f).scaleX(1f).scaleY(1f)
-                    .setDuration(350).setInterpolator(new OvershootInterpolator(1.0f)).start();
-        }, 500);
-
-        // ANIMASI 3: Ganti Typing dengan Pesan 1
-        handler.postDelayed(() -> {
-            typingWrap.setVisibility(View.GONE);
-
-            tvGreetingMsg.setText(greetingText);
-            tvTime1.setText(timeNow);
-
-            row1.setVisibility(View.VISIBLE);
-            row1.setAlpha(0f);
-            row1.setScaleX(0.6f);
-            row1.setScaleY(0.6f);
-            row1.setPivotX(0f);
-            row1.setPivotY(0f);
-            row1.animate()
-                    .alpha(1f).scaleX(1f).scaleY(1f)
-                    .setDuration(400)
-                    .setInterpolator(new OvershootInterpolator(1.2f))
-                    .start();
-        }, 1900);
-
-        // ANIMASI 4: Typing Kedua Muncul di Bawah Pesan 1
-        handler.postDelayed(() -> {
-            typingWrap.setVisibility(View.VISIBLE);
-            typingWrap.setAlpha(0f);
-            typingWrap.setScaleX(0.8f);
-            typingWrap.setScaleY(0.8f);
-            typingWrap.setPivotX(0f);
-            typingWrap.animate().alpha(1f).scaleX(1f).scaleY(1f)
-                    .setDuration(350).setInterpolator(new OvershootInterpolator(1.0f)).start();
-        }, 2900);
-
-        // ANIMASI 5: Ganti Typing dengan Pesan 2
-        handler.postDelayed(() -> {
-            typingWrap.setVisibility(View.GONE);
-
-            tvTipMsg.setText(tipText);
-            tvTime2.setText(timeNow);
-
-            row2.setVisibility(View.VISIBLE);
-            row2.setAlpha(0f);
-            row2.setScaleX(0.6f);
-            row2.setScaleY(0.6f);
-            row2.setPivotX(0f);
-            row2.setPivotY(0f);
-            row2.animate()
-                    .alpha(1f).scaleX(1f).scaleY(1f)
-                    .setDuration(400)
-                    .setInterpolator(new OvershootInterpolator(1.2f))
-                    .start();
-        }, 4300);
-
-        // Tombol close dengan animasi keluar
-        btnClose.setOnClickListener(v ->
-                dismissPopupWithAnimation(dialog, popupContainer));
-
-        // Tap di luar popup → tutup
-        dialog.setOnCancelListener(d -> {
-            handler.removeCallbacksAndMessages(null);
-            handler.post(timeUpdater);
-        });
-
-        dialog.show();
-    }
-
-    private void dismissPopupWithAnimation(Dialog dialog,
-                                           android.view.View container) {
-        container.animate()
-                .alpha(0f).scaleX(0.85f).scaleY(0.85f).translationY(15f)
-                .setDuration(250)
-                .withEndAction(() -> {
-                    if (dialog.isShowing()) dialog.dismiss();
-                    handler.removeCallbacks(timeUpdater);
-                    handler.post(timeUpdater);
-                })
-                .start();
     }
 }

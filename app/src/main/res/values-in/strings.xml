@@ -86,15 +86,6 @@
     <string name="action_cancel">Batal</string>
     <string name="toast_home_updated">Data diperbarui.</string>
 
-    <string name="popup_welcome_title">Selamat datang di Kitsune Note!</string>
-    <string name="popup_greeting_morning">🌅 Selamat pagi! Saya Kitsune, asisten catatan Anda. Mari mulai hari ini dengan ide-ide hebat!</string>
-    <string name="popup_greeting_afternoon">☀️ Selamat siang! Saya Kitsune. Jangan lupa simpan pemikiran Anda di Kitsune Note!</string>
-    <string name="popup_greeting_evening">🌤️ Selamat sore! Saya Kitsune. Kerja bagus hari ini — abadikan ide Anda sebelum memudar!</string>
-    <string name="popup_greeting_night">🌙 Selamat malam! Saya Kitsune. Catat hal-hal penting sebelum Anda beristirahat!</string>
-    <string name="popup_message_1">📝 Tulis ide Anda sekarang sebelum terlupakan. Kitsune Note menyimpan semuanya dengan aman untuk Anda!</string>
-    <string name="popup_message_2">✨ Tips: Coba minta bantuan Gemini AI untuk mengembangkan catatan dan ide Anda!</string>
-    <string name="popup_typing_dots">● ● ●</string>
-
     <!-- ══════════════════════════════════════════════════════════════
          CATATAN
     ══════════════════════════════════════════════════════════════ -->
