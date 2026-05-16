@@ -234,6 +234,10 @@
     <string name="dialog_delete_chat_message">This chat will be permanently deleted and cannot be recovered.</string>
     <string name="cd_delete_icon">Delete Icon</string>
 
+    <string name="banner_no_network">No internet connection</string>
+    <string name="error_no_network">Connection lost. Check your network.</string>
+    <string name="cd_no_network">No network</string>
+
     <!-- ══════════════════════════════════════════════════════════════
          PROFILE
     ══════════════════════════════════════════════════════════════ -->

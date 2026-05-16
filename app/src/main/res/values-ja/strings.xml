@@ -233,6 +233,10 @@
     <string name="dialog_delete_chat_message">このチャットは完全に削除され、復元できません。</string>
     <string name="cd_delete_icon">削除アイコン</string>
 
+    <string name="banner_no_network">インターネット接続がありません</string>
+    <string name="error_no_network">接続が切断されました。ネットワークを確認してください。</string>
+    <string name="cd_no_network">ネットワークなし</string>
+
     <!-- ══════════════════════════════════════════════════════════════
          プロフィール
     ══════════════════════════════════════════════════════════════ -->

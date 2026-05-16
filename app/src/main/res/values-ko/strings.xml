@@ -233,6 +233,10 @@
     <string name="dialog_delete_chat_message">이 채팅은 영구적으로 삭제되며 복구할 수 없습니다.</string>
     <string name="cd_delete_icon">삭제 아이콘</string>
 
+    <string name="banner_no_network">인터넷 연결이 없습니다</string>
+    <string name="error_no_network">연결이 끊겼습니다. 네트워크를 확인해 주세요.</string>
+    <string name="cd_no_network">네트워크 없음</string>
+
     <!-- ══════════════════════════════════════════════════════════════
          프로필
     ══════════════════════════════════════════════════════════════ -->

@@ -233,6 +233,10 @@
     <string name="dialog_delete_chat_message">Chat ini akan dihapus secara permanen dan tidak dapat dipulihkan.</string>
     <string name="cd_delete_icon">Ikon hapus</string>
 
+    <string name="banner_no_network">Tidak ada koneksi internet</string>
+    <string name="error_no_network">Koneksi terputus. Periksa jaringan Anda.</string>
+    <string name="cd_no_network">Tidak ada jaringan</string>
+
     <!-- ══════════════════════════════════════════════════════════════
          PROFIL
     ══════════════════════════════════════════════════════════════ -->
