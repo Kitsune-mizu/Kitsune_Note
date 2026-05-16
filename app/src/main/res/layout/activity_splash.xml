@@ -8,17 +8,35 @@
     android:background="?attr/color_3"
     tools:context=".ui.splash.SplashActivity">
 
-    <!-- PHASE 1: SVG full layar -->
-    <WebView
-        android:id="@+id/splashWebView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@android:color/transparent"
+    <!-- PHASE 1: Lottie Animation dari folder RAW -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/splashLottie"
+        android:layout_width="520dp"
+        android:layout_height="520dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:lottie_rawRes="@raw/splash_anim"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:layout_constraintBottom_toTopOf="@id/loadingBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- PHASE 1: Loading bar (simple indeterminate) -->
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="200dp"
+        android:layout_height="15dp"
+        android:layout_marginBottom="80dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?attr/text_color"
+        android:progressBackgroundTint="?attr/color_2"
+        android:progressBackgroundTintMode="src_in"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- PHASE 2: Flag + Greeting -->
     <LinearLayout

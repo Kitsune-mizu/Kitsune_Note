@@ -3,9 +3,7 @@ package com.android.kitsune.ui.splash;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,15 +12,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.kitsune.R;
 import com.android.kitsune.base.BaseActivity;
 import com.android.kitsune.data.session.UserSession;
@@ -31,24 +29,22 @@ import com.android.kitsune.ui.main.MainActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
-import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.location.SettingsClient;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -61,31 +57,31 @@ public class SplashActivity extends BaseActivity {
 
     private static final String TAG = "SplashActivity";
     private static final int LOCATION_PERMISSION_REQUEST = 101;
-    private static final int REQUEST_CHECK_SETTINGS = 102;
+    private static final int REQUEST_CHECK_SETTINGS      = 102;
 
     // ─── Views ───────────────────────────────────────────────────────────────
 
-    private WebView splashWebView;
-    private LinearLayout greetingContainer;
-    private ImageView imgFlag;
-    private TextView tvGreeting;
+    private LottieAnimationView splashLottie;
+    private ProgressBar         loadingBar;
+    private LinearLayout        greetingContainer;
+    private ImageView           imgFlag;
+    private TextView            tvGreeting;
 
     // ─── Location ────────────────────────────────────────────────────────────
 
     private FusedLocationProviderClient fusedLocationClient;
-    private LocationCallback locationCallback;
-    private LocationRequest locationRequest;
+    private LocationCallback            locationCallback;
+    private LocationRequest             locationRequest;
 
     // ─── State ───────────────────────────────────────────────────────────────
 
-    private String lastCountry = "";
-    private boolean isFlagLoaded = false;
+    private String  lastCountry     = "";
+    private boolean isFlagLoaded    = false;
     private boolean isGreetingReady = false;
-    private boolean isDestroyed = false;        // ← guard lifecycle
+    private boolean isDestroyed     = false;
 
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final ExecutorService executor = Executors.newSingleThreadExecutor(); // ← ganti raw Thread
-
+    private final Handler         mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService executor    = Executors.newSingleThreadExecutor();
 
     // ─── Lifecycle ───────────────────────────────────────────────────────────
 
@@ -98,27 +94,7 @@ public class SplashActivity extends BaseActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         initViews();
-
-        // ── Muat HTML SVG dari Assets di background ──────────────
-        String[] themeColors = resolveThemeColors();
-        executor.execute(() -> {
-            // 1. Baca HTML mentah dari folder assets
-            String rawHtml = loadHtmlFromAsset();
-
-            // 2. Ganti placeholder dengan warna tema yang aktif
-            String finalHtml = rawHtml
-                    .replace("{{cMid}}", themeColors[0])
-                    .replace("{{cAccent}}", themeColors[1])
-                    .replace("{{cAccentLight}}", themeColors[2])
-                    .replace("{{cBorder}}", themeColors[3]);
-
-            // 3. Render ke WebView di Main Thread
-            mainHandler.post(() -> {
-                if (!isDestroyed) loadWebView(finalHtml, themeColors[4]);
-            });
-        });
-
-        mainHandler.postDelayed(this::checkLocationPermission, 3000);
+        setupAndPlayLottie();
     }
 
     @Override
@@ -130,21 +106,19 @@ public class SplashActivity extends BaseActivity {
         if (fusedLocationClient != null && locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
-        // Destroy WebView dengan benar agar tidak leak
-        if (splashWebView != null) {
-            splashWebView.stopLoading();
-            splashWebView.destroy();
+        if (splashLottie != null) {
+            splashLottie.cancelAnimation();
         }
     }
-
 
     // ─── Initialization ──────────────────────────────────────────────────────
 
     private void initViews() {
-        splashWebView    = findViewById(R.id.splashWebView);
+        splashLottie      = findViewById(R.id.splashLottie);
+        loadingBar        = findViewById(R.id.loadingBar);
         greetingContainer = findViewById(R.id.greetingContainer);
-        imgFlag          = findViewById(R.id.imgFlag);
-        tvGreeting       = findViewById(R.id.tvGreeting);
+        imgFlag           = findViewById(R.id.imgFlag);
+        tvGreeting        = findViewById(R.id.tvGreeting);
         TextView tvVersion = findViewById(R.id.tvVersion);
 
         if (tvVersion != null) {
@@ -155,79 +129,41 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Resolve warna tema sekali saja — dijalankan di main thread sebelum
-     * pekerjaan HTML diserahkan ke background.
-     * Mengembalikan array: [cMid, cAccent, cAccentLight, cBorder, cTextUi]
-     */
-    private String[] resolveThemeColors() {
-        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-        String themeMode  = prefs.getString("theme_mode", "system");
-        String colorTheme = prefs.getString("color_theme", "blue");
+    private void setupAndPlayLottie() {
+        // Sembunyikan dulu saat pertama kali activity dibuat agar tidak muncul tiba-tiba (kasar)
+        splashLottie.setAlpha(0f);
+        loadingBar.setAlpha(0f);
 
-        boolean isDark;
-        if      (themeMode.equals("dark"))  isDark = true;
-        else if (themeMode.equals("light")) isDark = false;
-        else {
-            int nightMode = getResources().getConfiguration().uiMode
-                    & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-            isDark = nightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES;
-        }
-
-        String cTextUi = isDark ? "#F1F5F9" : "#1E293B";
-        String cMid, cAccent, cAccentLight, cBorder;
-
-        if (isDark) {
-            cMid = "#1E293B"; cAccent = "#475569"; cAccentLight = "#334155"; cBorder = "#F1F5F9";
-        } else {
-            switch (colorTheme) {
-                case "purple": cMid="#F3F0FF"; cAccent="#A78BFA"; cAccentLight="#DDD6FE"; cBorder="#1E293B"; break;
-                case "pink":   cMid="#FCE7F3"; cAccent="#F9A8D4"; cAccentLight="#FBCFE8"; cBorder="#1E293B"; break;
-                case "green":  cMid="#ECFDF5"; cAccent="#6EE7B7"; cAccentLight="#A7F3D0"; cBorder="#1E293B"; break;
-                case "orange": cMid="#FFF7ED"; cAccent="#FB923C"; cAccentLight="#FED7AA"; cBorder="#1E293B"; break;
-                default:       cMid="#E8F4FD"; cAccent="#7BA7D8"; cAccentLight="#B8D4F1"; cBorder="#1E293B"; break;
+        // Fallback jika seandainya Lottie gagal memuat agar aplikasi tidak nyangkut (timeout 1.5 detik)
+        Runnable fallbackRunnable = () -> {
+            if (splashLottie.getAlpha() == 0f) {
+                splashLottie.animate().alpha(1f).setDuration(500).start();
+                loadingBar.animate().alpha(1f).setDuration(500).start();
+                checkLocationPermission();
             }
-        }
-        return new String[]{cMid, cAccent, cAccentLight, cBorder, cTextUi};
+        };
+        mainHandler.postDelayed(fallbackRunnable, 1500);
+
+        // Tunggu sampai file JSON Lottie benar-benar siap diputar
+        splashLottie.addLottieOnCompositionLoadedListener(composition -> {
+            mainHandler.removeCallbacks(fallbackRunnable); // Batalkan fallback karena Lottie sukses
+
+            // Fade In perlahan agar transisinya mulus
+            splashLottie.animate().alpha(1f).setDuration(600).start();
+            loadingBar.animate().alpha(1f).setDuration(600).start();
+
+            // Mulai hitung waktu 3 detik HANYA SETELAH Lottie siap dan mulai tampil
+            mainHandler.postDelayed(this::checkLocationPermission, 3000);
+        });
     }
-
-    /** Membaca file splash_anim.html dari folder assets */
-    private String loadHtmlFromAsset() {
-        try {
-            InputStream is = getAssets().open("splash_anim.html");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            reader.close();
-            return sb.toString();
-        } catch (Exception e) {
-            Log.e(TAG, "Gagal memuat file SVG dari asset", e);
-            return "";
-        }
-    }
-
-    /** Dipanggil dari main thread setelah HTML siap dari background */
-    @SuppressLint("SetJavaScriptEnabled")
-    private void loadWebView(String html, String cTextUi) {
-        int colorInt = Color.parseColor(cTextUi);
-        tvGreeting.setTextColor(colorInt);
-
-        WebSettings ws = splashWebView.getSettings();
-        ws.setJavaScriptEnabled(true);
-        splashWebView.setBackgroundColor(Color.TRANSPARENT);
-        splashWebView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
-    }
-
 
     // ─── Navigation ──────────────────────────────────────────────────────────
 
     private void goNext() {
         if (isDestroyed) return;
-        if (fusedLocationClient != null && locationCallback != null)
+        if (fusedLocationClient != null && locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
 
         startActivity(new Intent(this,
                 UserSession.getInstance().isLoggedIn() ? MainActivity.class : LoginActivity.class));
@@ -235,18 +171,16 @@ public class SplashActivity extends BaseActivity {
         finish();
     }
 
-
     // ─── Flag & Greeting ─────────────────────────────────────────────────────
 
     private void preloadFlagAndGreeting(String countryCode) {
-        isFlagLoaded   = false;
+        isFlagLoaded    = false;
         isGreetingReady = false;
 
         tvGreeting.setText(getManualGreeting(countryCode));
         isGreetingReady = true;
 
         String flagUrl = "https://flagcdn.com/w320/" + countryCode + ".png";
-        int size = 200;
         RequestOptions options = new RequestOptions()
                 .transform(new com.bumptech.glide.load.MultiTransformation<>(
                         new com.bumptech.glide.load.resource.bitmap.CenterCrop(),
@@ -288,10 +222,23 @@ public class SplashActivity extends BaseActivity {
 
     private void transitionToPhase2() {
         if (isDestroyed) return;
-        splashWebView.animate().alpha(0f).setDuration(400).withEndAction(() -> {
-            splashWebView.setVisibility(View.GONE);
+
+        // Fade Out Lottie + loading bar perlahan (durasi 400ms)
+        if (splashLottie != null) {
+            splashLottie.animate().alpha(0f).setDuration(400).withEndAction(() -> {
+                splashLottie.cancelAnimation();
+                splashLottie.setVisibility(View.GONE);
+            }).start();
+        }
+
+        if (loadingBar != null) {
+            loadingBar.animate().alpha(0f).setDuration(400).withEndAction(() -> {
+                loadingBar.setVisibility(View.GONE);
+                showGreetingSequence(); // Jalankan Fade In untuk Bendera
+            }).start();
+        } else {
             showGreetingSequence();
-        }).start();
+        }
     }
 
     private void showGreetingSequence() {
@@ -315,8 +262,7 @@ public class SplashActivity extends BaseActivity {
                 .withEndAction(() -> mainHandler.postDelayed(this::goNext, 2000)).start();
     }
 
-
-    // ─── Location Permission ──────────────────────────────────────────────────
+    // ─── Location Permission ─────────────────────────────────────────────────
 
     private void checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -383,7 +329,6 @@ public class SplashActivity extends BaseActivity {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, getMainLooper());
     }
 
-
     // ─── Geocoding ───────────────────────────────────────────────────────────
 
     private void handleLocation(Location location) {
@@ -417,7 +362,6 @@ public class SplashActivity extends BaseActivity {
             preloadFlagAndGreeting(countryCode);
         }
     }
-
 
     // ─── Fallback Location ────────────────────────────────────────────────────
 
