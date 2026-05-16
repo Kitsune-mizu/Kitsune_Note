@@ -212,7 +212,6 @@
 
     <!-- ================= SHARE PREVIEW ================= -->
     <LinearLayout
-        android:id="@+id/share_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/keyboard_toolbar"
@@ -223,7 +222,6 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/share_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?attr/text_color"
@@ -231,7 +229,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/share_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -240,7 +237,6 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/share_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
