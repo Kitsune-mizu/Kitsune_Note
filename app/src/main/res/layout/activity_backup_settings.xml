@@ -248,7 +248,7 @@
                     android:textAppearance="?attr/textAppearanceLabelSmall"
                     android:textColor="?attr/text_color"
                     android:alpha="0.5"
-                    android:background="@drawable/bg_dialog_rounded"
+                    android:background="@drawable/bg_rounded_info"
                     android:padding="10dp" />
 
             </LinearLayout>
